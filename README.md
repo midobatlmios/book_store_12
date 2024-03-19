@@ -38,7 +38,7 @@ php artisan serve
 
 ## Demo
 
-Hosted the app anywhere you want. [Click here](https://book-store.salimi.my) to visit.
+Hosted privately on personal DigitalOcean Droplet. [Click here](https://book-store.salimi.my) to visit.
 <br>
 Direct link: `https://book-store.salimi.my`
 
