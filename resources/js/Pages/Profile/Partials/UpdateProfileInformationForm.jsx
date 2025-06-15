@@ -125,7 +125,7 @@ export default function UpdateProfileInformation({ user, className = "" }) {
           <TextInput
             id="name"
             className="mt-1 block w-full"
-            value={data.name}
+            value={data.name ?? ""}
             onChange={(e) => setData("name", e.target.value)}
             placeholder="Enter your name..."
             required
@@ -139,7 +139,7 @@ export default function UpdateProfileInformation({ user, className = "" }) {
             id="email"
             type="email"
             className="mt-1 block w-full"
-            value={data.email}
+            value={data.email ?? ""}
             onChange={(e) => setData("email", e.target.value)}
             placeholder="Enter your email..."
             required
@@ -153,7 +153,7 @@ export default function UpdateProfileInformation({ user, className = "" }) {
             id="phone"
             type="text"
             className="mt-1 block w-full"
-            value={data.phone}
+            value={data.phone ?? ""}
             onChange={(e) => setData("phone", e.target.value)}
             placeholder="Enter your phone..."
             required

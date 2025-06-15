@@ -9,21 +9,21 @@ import { useState } from "react";
 export default function Show({ order, order_items }) {
   const [isDisable, setIsDisable] = useState(false);
 
-  const subTotal = order.subtotal.toLocaleString("en-MY", {
+  const subTotal = order.subtotal.toLocaleString("en-MA", {
     style: "currency",
-    currency: "MYR",
+    currency: "MAD",
     maximumFractionDigits: 2,
   });
 
-  const shipping = order.shipping.toLocaleString("en-MY", {
+  const shipping = order.shipping.toLocaleString("en-MA", {
     style: "currency",
-    currency: "MYR",
+    currency: "MAD",
     maximumFractionDigits: 2,
   });
 
-  const totalAll = order.total.toLocaleString("en-MY", {
+  const totalAll = order.total.toLocaleString("en-MA", {
     style: "currency",
-    currency: "MYR",
+    currency: "MAD",
     maximumFractionDigits: 2,
   });
 
@@ -121,10 +121,10 @@ export default function Show({ order, order_items }) {
                     </Link>
                     <p className="font-medium">
                       {(order_item.price * order_item.quantity).toLocaleString(
-                        "en-MY",
+                        "en-MA",
                         {
                           style: "currency",
-                          currency: "MYR",
+                          currency: "MAD",
                           maximumFractionDigits: 2,
                         }
                       )}

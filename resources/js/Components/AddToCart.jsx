@@ -12,21 +12,25 @@ export default function AddToCart({ id, quantity }) {
     e.stopPropagation();
     e.preventDefault();
 
-    router.post(
-      route("cart.store"),
-      { bookId: id, bookQuantity: quantity },
-      {
-        preserveScroll: true,
-        preserveState: false,
-        onStart: () => {
-          setIsDisabled(true);
-        },
-        onFinish: () => {
-          setIsDisabled(false);
-          drawer.onOpen();
-        },
+    console.log('Adding to cart:', { bookId: id, bookQuantity: quantity });
+
+    router.visit(route("cart.store"), {
+      method: 'post',
+      data: { bookId: id, bookQuantity: quantity },
+      preserveScroll: true,
+      preserveState: true,
+      onStart: () => {
+        setIsDisabled(true);
+      },
+      onSuccess: () => {
+        setIsDisabled(false);
+        drawer.onOpen();
+      },
+      onError: (errors) => {
+        console.error('Error adding to cart:', errors);
+        setIsDisabled(false);
       }
-    );
+    });
   };
 
   return (

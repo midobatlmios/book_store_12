@@ -1,0 +1,100 @@
+@startuml Order Process Sequence Diagram
+
+skinparam sequence {
+    ArrowColor DeepSkyBlue
+    ActorBorderColor DeepSkyBlue
+    LifeLineBorderColor blue
+    LifeLineBackgroundColor #A9DCDF
+    
+    ParticipantBorderColor DeepSkyBlue
+    ParticipantBackgroundColor DodgerBlue
+    ParticipantFontName Impact
+    ParticipantFontSize 17
+    ParticipantFontColor #A9DCDF
+    
+    ActorBackgroundColor aqua
+    ActorFontColor DeepSkyBlue
+    ActorFontSize 17
+    ActorFontName Aapex
+}
+
+actor "Client" as client
+participant "Interface\nUtilisateur" as UI
+participant "Panier" as cart
+participant "Commande" as order
+participant "Paiement" as payment
+participant "Stock" as stock
+database "Base de\nDonnées" as DB
+
+== Processus de Commande ==
+
+client -> UI: Ajouter au panier
+activate UI
+UI -> cart: Ajouter article
+activate cart
+cart -> DB: Sauvegarder panier
+deactivate cart
+UI --> client: Confirmation
+deactivate UI
+
+client -> UI: Voir panier
+activate UI
+UI -> cart: Récupérer articles
+activate cart
+cart --> UI: Liste des articles
+deactivate cart
+UI --> client: Afficher panier
+deactivate UI
+
+client -> UI: Passer commande
+activate UI
+UI -> order: Créer commande
+activate order
+order -> DB: Vérifier stock
+activate DB
+DB --> order: État du stock
+deactivate DB
+
+alt Stock disponible
+    order -> DB: Réserver stock
+    activate DB
+    DB --> order: Confirmation
+    deactivate DB
+    
+    order -> payment: Initialiser paiement
+    activate payment
+    payment --> order: Lien de paiement
+    deactivate payment
+    
+    order --> UI: Confirmation commande
+    UI --> client: Redirection paiement
+else Stock insuffisant
+    order --> UI: Erreur stock
+    UI --> client: Message d'erreur
+end
+deactivate order
+deactivate UI
+
+client -> payment: Effectuer paiement
+activate payment
+payment -> DB: Enregistrer paiement
+activate DB
+DB --> payment: Confirmation
+deactivate DB
+payment --> client: Confirmation paiement
+deactivate payment
+
+payment -> order: Confirmer commande
+activate order
+order -> DB: Finaliser commande
+activate DB
+DB --> order: Confirmation
+deactivate DB
+order -> stock: Mettre à jour stock
+activate stock
+stock --> order: Confirmation
+deactivate stock
+order --> client: Confirmation finale
+deactivate order
+
+@enduml 

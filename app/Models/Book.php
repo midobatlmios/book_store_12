@@ -12,7 +12,30 @@ class Book extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['type', 'title', 'description', 'image', 'isbn', 'author', 'publisher', 'stocks', 'pages', 'weight', 'price'];
+    protected $fillable = [
+        'type',
+        'title',
+        'description',
+        'image',
+        'isbn',
+        'author',
+        'publisher',
+        'stocks',
+        'pages',
+        'weight',
+        'price'
+    ];
+
+    protected $attributes = [
+        'image' => 'default-book.jpg',
+        'description' => '',
+        'stocks' => 0,
+        'pages' => 0,
+        'weight' => 0,
+        'isbn' => '0000000000000',
+        'publisher' => 'Unknown',
+        'type' => 'Fiction'
+    ];
 
     protected $sortable = ['price,asc', 'price,desc', 'title,asc', 'title,desc'];
 
@@ -23,7 +46,7 @@ class Book extends Model
 
     public function carts(): HasMany
     {
-        return $this->hasMany(Cart::class, 'book_id');
+        return $this->hasMany(Cart::class, 'book_id')->withoutCheckout();
     }
 
     public function orderItems(): HasMany

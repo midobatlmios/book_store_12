@@ -1,0 +1,118 @@
+@startuml Book Store Class Diagram
+
+skinparam class {
+    BackgroundColor LightBlue
+    ArrowColor SeaGreen
+    BorderColor SpringGreen
+}
+
+' Classes principales
+class User {
+    +id: int
+    +name: string
+    +email: string
+    +password: string
+    +is_admin: boolean
+    +created_at: datetime
+    +updated_at: datetime
+    +orders(): HasMany
+    +addresses(): HasMany
+    +carts(): HasMany
+}
+
+class Book {
+    +id: int
+    +title: string
+    +description: text
+    +price: decimal
+    +stock: int
+    +image: string
+    +created_at: datetime
+    +updated_at: datetime
+    +category(): BelongsTo
+    +orderItems(): HasMany
+    +cartItems(): HasMany
+}
+
+class Category {
+    +id: int
+    +name: string
+    +description: text
+    +created_at: datetime
+    +updated_at: datetime
+    +books(): HasMany
+}
+
+class Order {
+    +id: int
+    +user_id: int
+    +total: decimal
+    +status: string
+    +created_at: datetime
+    +updated_at: datetime
+    +user(): BelongsTo
+    +orderItems(): HasMany
+    +address(): BelongsTo
+}
+
+class OrderItem {
+    +id: int
+    +order_id: int
+    +book_id: int
+    +quantity: int
+    +price: decimal
+    +created_at: datetime
+    +updated_at: datetime
+    +order(): BelongsTo
+    +book(): BelongsTo
+}
+
+class Cart {
+    +id: int
+    +user_id: int
+    +created_at: datetime
+    +updated_at: datetime
+    +user(): BelongsTo
+    +cartItems(): HasMany
+}
+
+class CartItem {
+    +id: int
+    +cart_id: int
+    +book_id: int
+    +quantity: int
+    +created_at: datetime
+    +updated_at: datetime
+    +cart(): BelongsTo
+    +book(): BelongsTo
+}
+
+class Address {
+    +id: int
+    +user_id: int
+    +street: string
+    +city: string
+    +state: string
+    +postal_code: string
+    +country: string
+    +created_at: datetime
+    +updated_at: datetime
+    +user(): BelongsTo
+    +orders(): HasMany
+}
+
+' Relations
+User "1" -- "0..*" Order
+User "1" -- "0..*" Address
+User "1" -- "0..*" Cart
+
+Book "0..*" -- "1" Category
+Book "0..*" -- "0..*" OrderItem
+Book "0..*" -- "0..*" CartItem
+
+Order "1" -- "0..*" OrderItem
+Order "0..*" -- "1" Address
+
+Cart "1" -- "0..*" CartItem
+
+@enduml 

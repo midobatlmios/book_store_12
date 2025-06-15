@@ -14,6 +14,8 @@ class Cart extends Model
 
     protected $fillable = ['quantity', 'checkout_at'];
 
+    protected $with = ['bookOwner'];
+
     public function bookOwner(): BelongsTo
     {
         return $this->belongsTo(Book::class, 'book_id');

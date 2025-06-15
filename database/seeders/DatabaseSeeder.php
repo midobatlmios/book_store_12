@@ -47,7 +47,8 @@ class DatabaseSeeder extends Seeder
             CountrySeeder::class,
             BookSeeder::class,
             CategorySeeder::class,
-            CategoryBookSeeder::class
+            CategoryBookSeeder::class,
+            AdminSeeder::class,
         ]);
     }
 }

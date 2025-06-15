@@ -9,9 +9,9 @@ export default function Order({ order, first }) {
     day: "numeric",
   });
 
-  const order_total = order.total.toLocaleString("en-MY", {
+  const order_total = order.total.toLocaleString("en-MA", {
     style: "currency",
-    currency: "MYR",
+    currency: "MAD",
     maximumFractionDigits: 2,
   });
 

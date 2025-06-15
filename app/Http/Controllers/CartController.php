@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class CartController extends Controller
 {
@@ -14,7 +15,41 @@ class CartController extends Controller
      */
     public function index()
     {
-        return inertia('Cart/Index', []);
+        if (Auth::user()) {
+            $carts = Auth::user()->carts()
+                ->with('bookOwner')
+                ->withoutCheckout()
+                ->get();
+
+            \Log::info('Authenticated user cart data:', [
+                'user_id' => Auth::id(),
+                'carts_count' => $carts->count(),
+                'carts' => $carts->toArray()
+            ]);
+        } else {
+            $cartIds = session('carts', []);
+            $carts = Cart::with('bookOwner')
+                ->whereIn('id', $cartIds)
+                ->withoutCheckout()
+                ->get();
+
+            \Log::info('Guest user cart data:', [
+                'session_cart_ids' => $cartIds,
+                'carts_count' => $carts->count(),
+                'carts' => $carts->toArray()
+            ]);
+        }
+
+        // Debug the final data being sent to the view
+        \Log::info('Final cart data being sent to view:', [
+            'is_authenticated' => Auth::check(),
+            'carts_count' => $carts->count(),
+            'carts' => $carts->toArray()
+        ]);
+        
+        return inertia('Cart/Index', [
+            'carts' => $carts
+        ]);
     }
 
     /**
@@ -33,18 +68,27 @@ class CartController extends Controller
         $bookId = $request->input('bookId');
         $bookQuantity = $request->input('bookQuantity');
 
+        \Log::info('Adding to cart:', [
+            'book_id' => $bookId,
+            'quantity' => $bookQuantity,
+            'is_authenticated' => Auth::check(),
+            'session_carts' => session('carts', [])
+        ]);
+
         if ($request->user()) {
             $cart = $request->user()->carts()->where('book_id', '=', $bookId)->withoutCheckout()->first();
 
             if ($cart) {
                 $newQuantity = $cart->quantity + $bookQuantity;
                 $cart->update(['quantity' => $newQuantity]);
+                \Log::info('Updated existing cart:', ['cart_id' => $cart->id, 'new_quantity' => $newQuantity]);
             } else {
-                Book::find($bookId)->carts()->save(
+                $cart = Book::find($bookId)->carts()->save(
                     Cart::make(
                         ['quantity' => $bookQuantity]
                     )->userOwner()->associate($request->user())
                 );
+                \Log::info('Created new cart for user:', ['cart_id' => $cart->id]);
             }
         } else {
             if ($request->session()->has('carts')) {
@@ -55,21 +99,35 @@ class CartController extends Controller
                 if ($cart) {
                     $newQuantity = $cart->quantity + $bookQuantity;
                     $cart->update(['quantity' => $newQuantity]);
+                    \Log::info('Updated existing guest cart:', ['cart_id' => $cart->id, 'new_quantity' => $newQuantity]);
                 } else {
-                    $cartId = Book::find($bookId)->carts()->create(['quantity' => $bookQuantity])->id;
-
-                    $request->session()->push('carts', $cartId);
-                    $request->session()->save();
+                    $cart = Book::find($bookId)->carts()->create(['quantity' => $bookQuantity]);
+                    $cartIds[] = $cart->id;
+                    $request->session()->put('carts', $cartIds);
+                    \Log::info('Created new guest cart:', ['cart_id' => $cart->id, 'session_carts' => $cartIds]);
                 }
             } else {
-                $cartId = Book::find($bookId)->carts()->create(['quantity' => $bookQuantity])->id;
-
-                $request->session()->push('carts', $cartId);
-                $request->session()->save();
+                $cart = Book::find($bookId)->carts()->create(['quantity' => $bookQuantity]);
+                $request->session()->put('carts', [$cart->id]);
+                \Log::info('Created first guest cart:', ['cart_id' => $cart->id]);
             }
         }
 
-        return redirect()->back();
+        // Get updated cart data
+        if ($request->user()) {
+            $carts = $request->user()->carts()
+                ->with('bookOwner')
+                ->withoutCheckout()
+                ->get();
+        } else {
+            $cartIds = session('carts', []);
+            $carts = Cart::with('bookOwner')
+                ->whereIn('id', $cartIds)
+                ->withoutCheckout()
+                ->get();
+        }
+
+        return back()->with('carts', $carts);
     }
 
     /**
@@ -98,39 +156,62 @@ class CartController extends Controller
         if ($bookQuantity > 0) {
             $cart->update(['quantity' => $bookQuantity]);
         } else {
-            $cartIds = $request->session()->pull('carts');
-            if (($key = array_search($cart->id, $cartIds)) !== false) {
-                unset($cartIds[$key]);
-
-                if (!empty($cartIds)) {
-                    $request->session()->put('carts', $cartIds);
-                    $request->session()->save();
+            if (!$request->user()) {
+                $cartIds = $request->session()->get('carts', []);
+                if (($key = array_search($cart->id, $cartIds)) !== false) {
+                    unset($cartIds[$key]);
+                    $request->session()->put('carts', array_values($cartIds));
                 }
             }
             $cart->deleteOrFail();
         }
 
-        return redirect()->back();
+        // Get updated cart data
+        if ($request->user()) {
+            $carts = $request->user()->carts()
+                ->with('bookOwner')
+                ->withoutCheckout()
+                ->get();
+        } else {
+            $cartIds = session('carts', []);
+            $carts = Cart::with('bookOwner')
+                ->whereIn('id', $cartIds)
+                ->withoutCheckout()
+                ->get();
+        }
+
+        return back()->with('carts', $carts);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Cart $cart)
+    public function destroy(Request $request, Cart $cart)
     {
-        if (!Auth::user()) {
-            $cartIds = session('carts');
+        if (!$request->user()) {
+            $cartIds = session('carts', []);
             if (($key = array_search($cart->id, $cartIds)) !== false) {
                 unset($cartIds[$key]);
-
-                if (!empty($cartIds)) {
-                    session(['carts' => $cartIds]);
-                }
+                session(['carts' => array_values($cartIds)]);
             }
         }
 
         $cart->deleteOrFail();
 
-        return redirect()->back();
+        // Get updated cart data
+        if ($request->user()) {
+            $carts = $request->user()->carts()
+                ->with('bookOwner')
+                ->withoutCheckout()
+                ->get();
+        } else {
+            $cartIds = session('carts', []);
+            $carts = Cart::with('bookOwner')
+                ->whereIn('id', $cartIds)
+                ->withoutCheckout()
+                ->get();
+        }
+
+        return back()->with('carts', $carts);
     }
 }

@@ -2,19 +2,28 @@ import { Link } from "@inertiajs/react";
 import AddToCart from "@/Components/AddToCart";
 
 export default function BookCard({ book }) {
-  const price = book.price.toLocaleString("en-MY", {
+  const price = book.price.toLocaleString("en-MA", {
     style: "currency",
-    currency: "MYR",
+    currency: "MAD",
     maximumFractionDigits: 2,
   });
+
+  const imageUrl = book.image 
+    ? `/book-images/${book.image}`
+    : 'https://placehold.co/400x600/e2e8f0/1e293b?text=No+Image';
+
   return (
-    <Link href={route("book.show", book.slug)}>
+    <Link href={route("book.show", book.id)}>
       <div className="flex rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800 flex-col">
         <div className="flex h-full flex-col justify-start p-3 lg:p-6">
           <img
             className="object-cover w-full h-60 md:h-72 rounded-md"
-            src={`/book-images/${book.image}`}
+            src={imageUrl}
             alt={book.title}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = 'https://placehold.co/400x600/e2e8f0/1e293b?text=No+Image';
+            }}
           />
           <p className="text-gray-500 dark:text-gray-400 uppercase text-xs md:text-sm mt-1 md:mt-3 truncate">
             {book.publisher}

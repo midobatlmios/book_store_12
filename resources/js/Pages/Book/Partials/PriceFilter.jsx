@@ -22,7 +22,7 @@ export default function PriceFilter({ handleCheckbox, bookFilter, isMobile }) {
               htmlFor={`0-50${isMobile ? "-mobile" : ""}`}
               className="truncate font-medium cursor-pointer"
             >
-              Under RM50
+              Under MAD50
             </Label>
           </div>
           <div className="flex items-center gap-2 w-[200px]">
@@ -40,7 +40,7 @@ export default function PriceFilter({ handleCheckbox, bookFilter, isMobile }) {
               htmlFor={`50-100${isMobile ? "-mobile" : ""}`}
               className="truncate font-medium cursor-pointer"
             >
-              RM50 - RM100
+              MAD50 - MAD100
             </Label>
           </div>
           <div className="flex items-center gap-2 w-[200px]">
@@ -58,7 +58,7 @@ export default function PriceFilter({ handleCheckbox, bookFilter, isMobile }) {
               htmlFor={`100-150${isMobile ? "-mobile" : ""}`}
               className="truncate font-medium cursor-pointer"
             >
-              RM100 - RM150
+              MAD100 - MAD150
             </Label>
           </div>
           <div className="flex items-center gap-2 w-[200px]">
@@ -76,7 +76,7 @@ export default function PriceFilter({ handleCheckbox, bookFilter, isMobile }) {
               htmlFor={`150-200${isMobile ? "-mobile" : ""}`}
               className="truncate font-medium cursor-pointer"
             >
-              EM150 - RM200
+              MAD150 - MAD200
             </Label>
           </div>
           <div className="flex items-center gap-2 w-[200px]">
@@ -94,7 +94,7 @@ export default function PriceFilter({ handleCheckbox, bookFilter, isMobile }) {
               htmlFor={`200-10000${isMobile ? "-mobile" : ""}`}
               className="truncate font-medium cursor-pointer"
             >
-              Above RM200
+              Above MAD200
             </Label>
           </div>
         </ScrollAreaLayout>

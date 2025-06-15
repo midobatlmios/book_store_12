@@ -1,34 +1,37 @@
 import CheckoutItem from "@/Pages/Checkout/Partials/CheckoutItem";
 
 export default function CheckoutTotal({ carts }) {
-  const subTotal = carts
+  // Filter out carts with invalid book_owner data
+  const validCarts = carts.filter(cart => cart && cart.book_owner && typeof cart.book_owner.price === 'number');
+
+  const subTotal = validCarts
     .map((cart) => cart.book_owner.price * cart.quantity)
     .reduce((totalPrice, currentPrice) => totalPrice + currentPrice, 0)
-    .toLocaleString("en-MY", {
+    .toLocaleString("en-MA", {
       style: "currency",
-      currency: "MYR",
+      currency: "MAD",
       maximumFractionDigits: 2,
     });
 
-  const shipping = (10).toLocaleString("en-MY", {
+  const shipping = (10).toLocaleString("en-MA", {
     style: "currency",
-    currency: "MYR",
+    currency: "MAD",
     maximumFractionDigits: 2,
   });
 
   const totalAll = (
-    carts
+    validCarts
       .map((cart) => cart.book_owner.price * cart.quantity)
       .reduce((totalPrice, currentPrice) => totalPrice + currentPrice, 0) + 10
-  ).toLocaleString("en-MY", {
+  ).toLocaleString("en-MA", {
     style: "currency",
-    currency: "MYR",
+    currency: "MAD",
     maximumFractionDigits: 2,
   });
 
   return (
     <div className="flex flex-col space-y-4 text-gray-900 dark:text-white">
-      {carts.map((cart) => (
+      {validCarts.map((cart) => (
         <CheckoutItem key={cart.id} cart={cart} />
       ))}
 

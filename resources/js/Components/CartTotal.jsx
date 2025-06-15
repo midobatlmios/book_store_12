@@ -8,9 +8,9 @@ export default function CartTotal({ carts }) {
   const price = carts
     .map((cart) => cart.book_owner.price * cart.quantity)
     .reduce((totalPrice, currentPrice) => totalPrice + currentPrice, 0)
-    .toLocaleString("en-MY", {
+    .toLocaleString("en-MA", {
       style: "currency",
-      currency: "MYR",
+      currency: "MAD",
       maximumFractionDigits: 2,
     });
 

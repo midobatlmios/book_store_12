@@ -6,21 +6,18 @@ import InputError from "@/Components/InputError";
 import CheckoutTotal from "@/Pages/Checkout/Partials/CheckoutTotal";
 import IndexBreadcrumb from "@/Pages/Checkout/Breadcrumb/IndexBreadcrumb";
 
-export default function Index({ addresses, countries }) {
+export default function Index({ addresses = [], countries }) {
   const { auth, carts } = usePage().props;
 
   const { data, setData, post, processing, errors } = useForm({
-    address_index: addresses[0].default === "yes" ? "0" : "New Address",
-    shipping_name: addresses[0].default === "yes" ? addresses[0].name : "",
-    shipping_phone: addresses[0].default === "yes" ? addresses[0].phone : "",
-    shipping_address:
-      addresses[0].default === "yes" ? addresses[0].address : "",
-    shipping_city: addresses[0].default === "yes" ? addresses[0].city : "",
-    shipping_postal_code:
-      addresses[0].default === "yes" ? addresses[0].postal_code : "",
-    shipping_state: addresses[0].default === "yes" ? addresses[0].state : "",
-    shipping_country:
-      addresses[0].default === "yes" ? addresses[0].country : "",
+    address_index: addresses.length > 0 && addresses[0].default === "yes" ? "0" : "New Address",
+    shipping_name: addresses.length > 0 && addresses[0].default === "yes" ? addresses[0].name : "",
+    shipping_phone: addresses.length > 0 && addresses[0].default === "yes" ? addresses[0].phone : "",
+    shipping_address: addresses.length > 0 && addresses[0].default === "yes" ? addresses[0].address : "",
+    shipping_city: addresses.length > 0 && addresses[0].default === "yes" ? addresses[0].city : "",
+    shipping_postal_code: addresses.length > 0 && addresses[0].default === "yes" ? addresses[0].postal_code : "",
+    shipping_state: addresses.length > 0 && addresses[0].default === "yes" ? addresses[0].state : "",
+    shipping_country: addresses.length > 0 && addresses[0].default === "yes" ? addresses[0].country : "",
   });
 
   const handleAddressChange = (e) => {

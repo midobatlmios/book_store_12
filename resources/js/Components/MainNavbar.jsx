@@ -1,5 +1,5 @@
 import { Link } from "@inertiajs/react";
-import { LogIn, Search } from "lucide-react";
+import { LogIn, Search, LayoutDashboard } from "lucide-react";
 import { Navbar, Button } from "flowbite-react";
 
 import SearchBar from "@/Components/SearchBar";
@@ -78,6 +78,18 @@ export default function MainNavbar({ user, carts, filters }) {
           >
             Romance
           </Link>
+          {user && user.is_admin && (
+            <>
+              <div className="hidden md:block border-r-[1.5px] border-gray-200 dark:border-gray-700 h-4"></div>
+              <Link
+                href={route("admin.books.index")}
+                className="hidden md:flex items-center text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300"
+              >
+                <LayoutDashboard className="h-4 w-4 mr-1" />
+                Admin Dashboard
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -6,11 +6,16 @@ import CartQuantity from "@/Components/CartQuantity";
 export default function CartItem({ cart }) {
   const [isDisabled, setIsDisabled] = useState(false);
 
-  const price = (cart.book_owner.price * cart.quantity).toLocaleString(
-    "en-MY",
+  // Add validation to ensure cart and bookOwner exist
+  if (!cart || !cart.bookOwner) {
+    return null;
+  }
+
+  const price = (cart.bookOwner.price * cart.quantity).toLocaleString(
+    "en-MA",
     {
       style: "currency",
-      currency: "MYR",
+      currency: "MAD",
       maximumFractionDigits: 2,
     }
   );
@@ -18,11 +23,12 @@ export default function CartItem({ cart }) {
   return (
     <div className="flex items-center space-x-3 md:space-x-6">
       <Link
-        href={route("book.show", cart.book_owner.slug)}
+        href={route("book.show", cart.bookOwner.id)}
         className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-1 rounded-md shrink-0 transition-transform ease-in-out hover:scale-105"
       >
         <img
-          src={`/book-images/${cart.book_owner.image}`}
+          src={`/book-images/${cart.bookOwner.image}`}
+          alt={cart.bookOwner.title}
           className={`w-28 h-40 object-cover rounded-md ${
             isDisabled ? "animate-pulse" : ""
           }`}
@@ -33,11 +39,11 @@ export default function CartItem({ cart }) {
           {price}
         </p>
         <Link
-          href={route("book.show", cart.book_owner.slug)}
+          href={route("book.show", cart.bookOwner.id)}
           className="hover:underline"
         >
           <p className={`font-medium ${isDisabled ? "animate-pulse" : ""}`}>
-            {cart.book_owner.title}
+            {cart.bookOwner.title}
           </p>
         </Link>
         <CartQuantity

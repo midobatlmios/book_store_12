@@ -3,6 +3,7 @@ import { usePage } from "@inertiajs/react";
 import Footer from "@/Components/Footer";
 import MainNavbar from "@/Components/MainNavbar";
 import CartDrawer from "@/Components/CartDrawer";
+import ErrorBoundary from "@/Components/ErrorBoundary";
 
 export default function MainLayout({ children, filters }) {
   const { auth, carts } = usePage().props;
@@ -14,7 +15,9 @@ export default function MainLayout({ children, filters }) {
         {children}
       </main>
       <Footer />
-      <CartDrawer carts={carts} />
+      <ErrorBoundary>
+        <CartDrawer carts={carts} />
+      </ErrorBoundary>
     </div>
   );
 }

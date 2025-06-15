@@ -7,20 +7,25 @@ export default function CartQuantity({ cart, isDisabled, setIsDisabled }) {
   const [quantity, setQuantity] = useState(cart.quantity);
 
   const handleAdd = () => {
-    if (quantity < cart.book_owner.stocks) {
+    if (quantity < cart.bookOwner.stocks) {
       setQuantity(quantity + 1);
     }
   };
 
   const handleMinus = () => {
-    setQuantity(quantity - 1);
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
   };
 
   const handleQuantityChange = (e) => {
-    if (e.target.value > cart.book_owner.stocks) {
-      setQuantity(cart.book_owner.stocks);
+    const newQuantity = parseInt(e.target.value);
+    if (isNaN(newQuantity) || newQuantity < 1) {
+      setQuantity(1);
+    } else if (newQuantity > cart.bookOwner.stocks) {
+      setQuantity(cart.bookOwner.stocks);
     } else {
-      setQuantity(e.target.value);
+      setQuantity(newQuantity);
     }
   };
 
@@ -60,7 +65,7 @@ export default function CartQuantity({ cart, isDisabled, setIsDisabled }) {
     <div className="flex items-center pt-3">
       <button
         onClick={handleMinus}
-        disabled={isDisabled}
+        disabled={isDisabled || quantity <= 1}
         className="flex justify-center w-8 h-8 items-center focus:outline-none text-white bg-cyan-700 border border-transparent enabled:hover:bg-cyan-800 focus:ring-cyan-300 dark:bg-cyan-600 dark:enabled:hover:bg-cyan-700 dark:focus:ring-cyan-800 focus:ring-2 rounded-l-md disabled:opacity-50 disabled:hover:cursor-not-allowed"
       >
         <Minus />
@@ -69,7 +74,7 @@ export default function CartQuantity({ cart, isDisabled, setIsDisabled }) {
         id="quantity"
         type="number"
         min={1}
-        max={cart.book_owner.stocks}
+        max={cart.bookOwner.stocks}
         value={quantity}
         disabled={isDisabled}
         onChange={(e) => handleQuantityChange(e)}
@@ -77,7 +82,7 @@ export default function CartQuantity({ cart, isDisabled, setIsDisabled }) {
       />
       <button
         onClick={handleAdd}
-        disabled={isDisabled}
+        disabled={isDisabled || quantity >= cart.bookOwner.stocks}
         className="flex justify-center w-8 h-8 items-center focus:outline-none text-white bg-cyan-700 border border-transparent enabled:hover:bg-cyan-800 focus:ring-cyan-300 dark:bg-cyan-600 dark:enabled:hover:bg-cyan-700 dark:focus:ring-cyan-800 focus:ring-2 rounded-r-md disabled:opacity-50 disabled:hover:cursor-not-allowed"
       >
         <Plus />

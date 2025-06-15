@@ -35,9 +35,9 @@ export default function Show({ book, relatedBooks }) {
     }
   };
 
-  const price = book.price.toLocaleString("en-MY", {
+  const price = book.price.toLocaleString("en-MA", {
     style: "currency",
-    currency: "MYR",
+    currency: "MAD",
     maximumFractionDigits: 2,
   });
 

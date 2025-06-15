@@ -1,0 +1,73 @@
+@startuml Book Store Use Case Diagram
+
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam usecase {
+    BackgroundColor<< Main >> LightBlue
+    BorderColor Blue
+    ArrowColor Blue
+}
+
+' Actors
+actor "Client" as client
+actor "Utilisateur" as user
+actor "Administrateur" as admin
+actor "Système" as system
+
+' Packages
+rectangle "Gestion des Utilisateurs" {
+    usecase "S'inscrire" as register
+    usecase "Se connecter" as login
+    usecase "Gérer le profil" as manageProfile
+    usecase "Gérer les adresses" as manageAddresses
+}
+
+rectangle "Gestion des Livres" {
+    usecase "Parcourir les livres" as browseBooks
+    usecase "Rechercher des livres" as searchBooks
+    usecase "Filtrer les livres" as filterBooks
+    usecase "Voir les détails" as viewDetails
+    usecase "Gérer les livres" as manageBooks << Main >>
+    usecase "Gérer les catégories" as manageCategories << Main >>
+}
+
+rectangle "Gestion des Commandes" {
+    usecase "Ajouter au panier" as addToCart
+    usecase "Gérer le panier" as manageCart
+    usecase "Passer une commande" as placeOrder
+    usecase "Voir l'historique" as viewHistory
+    usecase "Gérer les commandes" as manageOrders << Main >>
+}
+
+rectangle "Administration" {
+    usecase "Gérer les utilisateurs" as manageUsers << Main >>
+    usecase "Voir les statistiques" as viewStats << Main >>
+    usecase "Gérer les stocks" as manageStock << Main >>
+}
+
+' Relationships
+client --> register
+client --> login
+client --> browseBooks
+client --> searchBooks
+client --> filterBooks
+client --> viewDetails
+
+user --> manageProfile
+user --> manageAddresses
+user --> addToCart
+user --> manageCart
+user --> placeOrder
+user --> viewHistory
+
+admin --> manageUsers
+admin --> manageBooks
+admin --> manageCategories
+admin --> manageOrders
+admin --> viewStats
+admin --> manageStock
+
+system --> manageStock
+system --> viewStats
+
+@enduml 
